@@ -26,10 +26,6 @@ jobs:
           npm install
           npm ci 
       
-    - name: build & test
-      run: |
-          npm run build
-          npm run test
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
