@@ -3,7 +3,7 @@ name: Node.js CI
 on:
   push:
      tags:
-     -  Dev:[0-9]+.[0-9]+.[0-9]+-RC
+     -  v[0-9]+.[0-9]+.[0-9]+-RC
 jobs:
   build_test:
 
