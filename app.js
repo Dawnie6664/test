@@ -1,45 +1,26 @@
-// import Express and routes
-import express from 'express';
-import routes from './source/routes/route.js';
-
-// vary these constants according to where you are running (GCS, VMs, K8S) and how many VMs you have, if that's the lesson)
-// to do: this should be a command-line parameter that lets the app know how it is running
-//const arrNodes = [ "localhost" ]                                    // for testing on GCS
-const arrNodes = [ process.env.NODE_SVC_PUBLIC_SERVICE_HOST  ];       //  use this for K8S
-
-// constant variables 
+const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 30002;
-const HOST = '0.0.0.0';
+const router = express.Router();
 
-// body parser setup for Express v4.16.0 and higher
-app.use(express.json());
-app.use(express.urlencoded(
-	{
-  		extended: true
-	}
-));
+const path = __dirname + '/views/';
+const port = 8080;
 
-// We'll use our routes function that we setup and imported above
-// and then pass it to our app Express 
-routes(app);
+router.use(function (req,res,next) {
+    console.log('/' + req.method);
+    next();
+  });
+  
+  router.get('/', function(req,res){
+    res.sendFile(path + 'index.html');
+  });
+  
+  router.get('/sharks', function(req,res){
+    res.sendFile(path + 'sharks.html');
+  });
 
-// Setting the server to listen at port 3000
-app.listen(PORT, HOST, function () {
-  console.log(`Server started and running on ${PORT}`);
-});
+app.use(express.static(path));
+app.use('/', router);
 
-function buildURL (strLevel) {
-  // what is the formula for which node to call? 
-  // given x levels and n nodes
-  // x % n  where x>n, else n 
-  let intCurrLevel = parseInt(strLevel);
-  let nextLevel = intCurrLevel - 1;
-  let numNodes = arrNodes.length; // to be derived from arrNodes
-  let nextNode = nextLevel >= numNodes ? nextLevel % numNodes : nextLevel;
-  let strURL = "http://"+ arrNodes[nextNode] + ":" + PORT + "/" + nextLevel;
-    
-  console.log ("returning URL " + strURL);
-   return(strURL);
-
-}
+app.listen(port, function () {
+  console.log('Example app listening on port 8080!')
+})
