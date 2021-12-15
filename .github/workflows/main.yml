@@ -55,21 +55,21 @@ jobs:
               "ECS_CLUSTER"  : "${{ secrets.PROD_ECS_CLUSTER }}",
               "ECS_CONTAINER": "${{ secrets.PROD_ECS_CONTAINER }}",
               "ECS_SERVICE"  : "${{ secrets.PROD_ECS_SERVICE }}",
-              "REPO_NAME"    : "${{ secrets.PROD_REPO_NAME }}",
+              "REPO_NAME"    : "${{ secrets.PROD_REPO_NAME }}"
             },
             "staging": {
               "environment"  : "staging",
               "ECS_CLUSTER"  : "${{ secrets.STG_ECS_CLUSTER }}",
               "ECS_CONTAINER": "${{ secrets.STG_ECS_CONTAINER }}",
               "ECS_SERVICE"  : "${{ secrets.STG_ECS_SERVICE }}",
-              "REPO_NAME"    : "${{ secrets.STG_REPO_NAME }}",
+              "REPO_NAME"    : "${{ secrets.STG_REPO_NAME }}"
             },
             "development": {
               "environment"  : "development",
               "ECS_CLUSTER"  : "${{ secrets.DEV_ECS_CLUSTER }}",
               "ECS_CONTAINER": "${{ secrets.DEV_ECS_CONTAINER }}",
               "ECS_SERVICE"  : "${{ secrets.DEV_ECS_SERVICE }}",
-              "REPO_NAME"    : "${{ secrets.DEV_REPO_NAME }}",
+              "REPO_NAME"    : "${{ secrets.DEV_REPO_NAME }}"
             }
           }
 
