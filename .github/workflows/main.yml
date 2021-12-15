@@ -72,7 +72,7 @@ jobs:
               "repo_name"    : "${{ secrets.DEV_REPO_NAME }}"
             }
           }
-          export_to: env,secrets,outputs
+        export_to: env,secrets,outputs
     - name: Echo environment and output
       run: |
         echo "${{ steps.export.outputs.repo_name }}"
