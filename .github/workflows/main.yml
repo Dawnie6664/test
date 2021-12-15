@@ -52,38 +52,38 @@ jobs:
           {
             "production": {
               "environment"  : "production",
-              "ECS_CLUSTER"  : "${{ secrets.PROD_ECS_CLUSTER }}",
-              "ECS_CONTAINER": "${{ secrets.PROD_ECS_CONTAINER }}",
-              "ECS_SERVICE"  : "${{ secrets.PROD_ECS_SERVICE }}",
-              "REPO_NAME"    : "${{ secrets.PROD_REPO_NAME }}"
+              "ecs_cluster"  : "${{ secrets.PROD_ECS_CLUSTER }}",
+              "ecs_container": "${{ secrets.PROD_ECS_CONTAINER }}",
+              "ecs_service"  : "${{ secrets.PROD_ECS_SERVICE }}",
+              "repo_name"    : "${{ secrets.PROD_REPO_NAME }}"
             },
             "staging": {
               "environment"  : "staging",
-              "ECS_CLUSTER"  : "${{ secrets.STG_ECS_CLUSTER }}",
-              "ECS_CONTAINER": "${{ secrets.STG_ECS_CONTAINER }}",
-              "ECS_SERVICE"  : "${{ secrets.STG_ECS_SERVICE }}",
-              "REPO_NAME"    : "${{ secrets.STG_REPO_NAME }}"
+              "ecs_cluster"  : "${{ secrets.STG_ECS_CLUSTER }}",
+              "ecs_container": "${{ secrets.STG_ECS_CONTAINER }}",
+              "ecs_service"  : "${{ secrets.STG_ECS_SERVICE }}",
+              "repo_name"    : "${{ secrets.STG_REPO_NAME }}"
             },
             "development": {
               "environment"  : "development",
-              "ECS_CLUSTER"  : "${{ secrets.DEV_ECS_CLUSTER }}",
-              "ECS_CONTAINER": "${{ secrets.DEV_ECS_CONTAINER }}",
-              "ECS_SERVICE"  : "${{ secrets.DEV_ECS_SERVICE }}",
-              "REPO_NAME"    : "${{ secrets.DEV_REPO_NAME }}"
+              "ecs_cluster"  : "${{ secrets.DEV_ECS_CLUSTER }}",
+              "ecs_container": "${{ secrets.DEV_ECS_CONTAINER }}",
+              "ecs_service"  : "${{ secrets.DEV_ECS_SERVICE }}",
+              "repo_name"    : "${{ secrets.DEV_REPO_NAME }}"
             }
           }
     - name: Echo environment and output
       run: |
-        echo "${{ steps.export.outputs.REPO_NAME }}"
-        echo "${{ steps.export.outputs.ECS_CONTAINER }}"
+        echo "${{ steps.export.outputs.repo_name }}"
+        echo "${{ steps.export.outputs.ecs_container }}"
         echo "${{ steps.export.outputs.ECS_SERVICE }}"
-        echo "${{ steps.export.outputs.ECS_CLUSTER }}"
+        echo "${{ steps.export.outputs.ecs_cluster }}"
         
     - name: Build, tag, and push the image to Amazon ECR
       id: build-image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: ${{ steps.export.outputs.REPO_NAME }}
+        ECR_REPOSITORY: ${{ steps.export.outputs.repo_name }}
         IMAGE_TAG: ${{ steps.extract_branch.outputs.branch }}-${{ steps.extract_branch.outputs.sha_short }}
       run: |
         echo " $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
@@ -94,7 +94,7 @@ jobs:
 
     - name: Download task definition
       run: |
-          aws ecs describe-task-definition --task-definition ${{steps.export.outputs.ECS_CONTAINER}} \
+          aws ecs describe-task-definition --task-definition ${{steps.export.outputs.ecs_container}} \
           --query taskDefinition > task-definition.json
 
     - name: Fill in the new image ID in the Amazon ECS task definition
@@ -102,13 +102,13 @@ jobs:
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: task-definition.json
-        container-name: ${{steps.export.outputs.ECS_CONTAINER}}
+        container-name: ${{steps.export.outputs.ecs_container}}
         image: ${{ steps.build-image.outputs.image }}
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: ${{ steps.export.outputs.ECS_SERVICE }}
-        cluster: ${{ steps.export.outputs.ECS_CLUSTER }}
+        service: ${{ steps.export.outputs.ecs_service }}
+        cluster: ${{ steps.export.outputs.ecs_cluster }}
         wait-for-service-stability: true
