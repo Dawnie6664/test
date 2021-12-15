@@ -76,7 +76,7 @@ jobs:
       run: |
         echo "${{ steps.export.outputs.repo_name }}"
         echo "${{ steps.export.outputs.ecs_container }}"
-        echo "${{ steps.export.outputs.ECS_SERVICE }}"
+        echo "${{ steps.export.outputs.ecs_service }}"
         echo "${{ steps.export.outputs.ecs_cluster }}"
         
     - name: Build, tag, and push the image to Amazon ECR
