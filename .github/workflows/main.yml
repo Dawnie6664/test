@@ -47,7 +47,7 @@ jobs:
     - uses: kanga333/variable-mapper@master
       id: export
       with:
-        key: "${{github.ref == 'refs/heads/staging'}}"
+        key: ${{github.ref == 'refs/heads/staging'}}
         map: |
           {
             "production": {
@@ -70,7 +70,7 @@ jobs:
               "ECS_CONTAINER": "${{ secrets.DEV_ECS_CONTAINER }}",
               "ECS_SERVICE"  : "${{ secrets.DEV_ECS_SERVICE }}",
               "REPO_NAME"    : "${{ secrets.DEV_REPO_NAME }}",
-            }
+            },
           }
 
     - name: Build, tag, and push the image to Amazon ECR
