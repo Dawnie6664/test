@@ -30,6 +30,7 @@ jobs:
        id: extract_branch 
        shell: bash
        run: |
+           echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_HEAD_REF})"
            echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/tags/})"
            echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"       
       
@@ -48,7 +49,7 @@ jobs:
       id: build-image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: ${{ secrets.PROD_REPO_NAME }}
+        ECR_REPOSITORY: ${{ secrets.REPO_NAME_BRANCH_NAME }}
         IMAGE_TAG: ${{ steps.extract_branch.outputs.branch }}-${{ steps.extract_branch.outputs.sha_short }}
       run: |
         echo " $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
@@ -59,7 +60,7 @@ jobs:
 
     - name: Download task definition
       run: |
-          aws ecs describe-task-definition --task-definition ${{secrets.PROD_ECS_CONTAINER}} \
+          aws ecs describe-task-definition --task-definition ${{secrets.ECS_CONTAINER_BRANCH_NAME}} \
           --query taskDefinition > task-definition.json
 
     - name: Fill in the new image ID in the Amazon ECS task definition
@@ -67,14 +68,14 @@ jobs:
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: task-definition.json
-        container-name: ${{secrets.PROD_ECS_CONTAINER}}
+        container-name: ${{secrets.ECS_CONTAINER_BRANCH_NAME}}
         image: ${{ steps.build-image.outputs.image }}
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: ${{ secrets.PROD_ECS_SERVICE }}
-        cluster: ${{ secrets.PROD_ECS_CLUSTER }}
+        service: ${{ secrets.ECS_SERVICE_BRANCH_NAME }}
+        cluster: ${{ secrets.ECS_CLUSTER_BRANCH_NAME }}
         wait-for-service-stability: true
         timeout: 300
