@@ -35,7 +35,7 @@ jobs:
            echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"      
      
     - name: Get branch name
-      run: echo 'The branch name is' steps.extract_branch.outputs.$BRANCH_NAME
+      run: echo 'The branch name is' ${{steps.extract_branch.outputs.BRANCH_NAME}}
       
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
