@@ -30,7 +30,7 @@ jobs:
        id: extract_branch 
        shell: bash
        run: |
-           echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/head/})"
+           echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
            echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"      
      
       
